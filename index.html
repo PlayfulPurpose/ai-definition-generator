@@ -120,6 +120,39 @@
   .def-word.col-object { background: rgba(61,90,62,0.12); color: var(--sage); }
   .def-word.col-actionverb { background: rgba(30,80,120,0.12); color: #1e5078; }
 
+  /* Sticky bottom bar */
+  .sticky-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 0.9rem 1.5rem;
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+    line-height: 1.6;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    z-index: 50;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+    min-height: 52px;
+  }
+
+  .sticky-bar .def-word { font-weight: 600; padding: 0.1em 0.4em; border-radius: 2px; }
+  .sticky-bar .def-word.col-verb { background: rgba(180,130,200,0.3); color: #dbb8f0; }
+  .sticky-bar .def-word.col-noun { background: rgba(220,170,80,0.3); color: #f0d080; }
+  .sticky-bar .def-word.col-fixed { color: #aaa; font-weight: 300; font-style: italic; background: none; }
+  .sticky-bar .def-word.col-actionverb { background: rgba(80,150,220,0.3); color: #90c8f8; }
+  .sticky-bar .def-word.col-object { background: rgba(100,180,100,0.3); color: #90d890; }
+  .sticky-bar .def-word.col-location { background: rgba(220,120,80,0.3); color: #f0a880; }
+
+  .sticky-placeholder { color: #666; font-style: italic; font-size: 0.75rem; }
+
+  body { padding-bottom: 64px; }
+
   .def-placeholder {
     color: #bbb;
     font-style: italic;
@@ -298,7 +331,7 @@
 <header>
   <div class="logo-line"><a href="https://animalearning.com/" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px solid var(--plum-light);">ANIMA · Inspired Learning</a></div>
   <h1>Applied <span>Improvisation</span><br>Definition Generator</h1>
-  <div class="subtitle">Select one word from each column to craft your definition</div>
+  <div class="subtitle">Select one from each column to craft your definition</div>
   <div class="credit"><a href="https://www.linkedin.com/in/ted-desmaisons-3703a613/" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px solid #bbb;">Ted DesMaisons</a> with <a href="https://www.improvlady.com/" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px solid #bbb;">Rebecca Stockley</a>, November 2014</div>
 </header>
 
@@ -330,6 +363,10 @@
 <footer style="text-align:center;padding:2rem 1rem 2.5rem;font-size:0.6rem;color:#999;letter-spacing:0.08em;font-family:'Poppins',sans-serif;">
   vibe coded by <a href="https://www.linkedin.com/in/julietrell/" target="_blank" style="color:#999;text-decoration:none;border-bottom:1px solid #ccc;">Julie Trell</a> | Chief Play Officer of <a href="https://www.playfulpurpose.com/" target="_blank" style="color:#999;text-decoration:none;border-bottom:1px solid #ccc;">Playful Purpose</a> &nbsp;·&nbsp; © 2026
 </footer>
+
+<div class="sticky-bar" id="stickyBar">
+  <span class="sticky-placeholder">Select words from the columns above to build your definition...</span>
+</div>
 
 <script>
 const data = {
@@ -406,10 +443,12 @@ function selectItem(key, item, btn) {
 
 function updateDisplay() {
   const display = document.getElementById('defDisplay');
-  const { ingVerb, noun, fixed, actionVerb, object, location } = selected;
+  const sticky = document.getElementById('stickyBar');
+  const { ingVerb, noun, actionVerb, object, location } = selected;
 
   if (!ingVerb && !noun && !actionVerb && !object && !location) {
     display.innerHTML = '<span class="def-placeholder">← Select words from each column below to build your definition...</span>';
+    sticky.innerHTML = '<span class="sticky-placeholder">Select words from the columns above to build your definition...</span>';
     return;
   }
 
@@ -422,7 +461,9 @@ function updateDisplay() {
   if (object) parts.push(`<span class="def-word col-object">${object}</span>`);
   if (location) parts.push(`<span class="def-word col-location">${location}.</span>`);
 
-  display.innerHTML = parts.join(' ');
+  const html = parts.join(' ');
+  display.innerHTML = html;
+  sticky.innerHTML = html;
 }
 
 function clearAll() {
